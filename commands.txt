@@ -1,0 +1,7 @@
+docker build --tag bio-ta .
+docker run --publish 8000:8000 bio-ta
+docker-compose run --rm django-admin startproject core .
+
+In container
+python manage.py makemigrations core
+python manage.py migrate core
