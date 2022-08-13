@@ -1,19 +1,20 @@
 import json
 from django.http import JsonResponse
-from django.db import transaction
 from django.shortcuts import render
 from core.models.Protein import Protein
 from rest_framework import generics
 import io, csv, pandas as pd
-from core.models.serializers import FileUploadSerializer
+from core.models.serializers import FileUploadSerializer, ProteinSerializer
+from rest_framework.response import Response
 
 def home(request):
     return
 
 class UploadFileView(generics.CreateAPIView):
+    
     serializer_class = FileUploadSerializer
     
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         proteins = []
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -43,3 +44,13 @@ class UploadFileView(generics.CreateAPIView):
             
         Protein.objects.bulk_create(proteins)
         return JsonResponse({'status':'success', 'code':'200'})
+
+
+class RetrieveDeleteItem(generics.ListAPIView):
+
+    serializer_class = ProteinSerializer
+    queryset = Protein.objects.filter(OneHrProteinAbundance__gte=32499599998)
+
+    def get_all(self, request):
+        return self.queryset
+

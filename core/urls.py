@@ -16,7 +16,7 @@ Including another URLconf
 from turtle import home
 from django.contrib import admin
 from django.urls import path
-from core.views import UploadFileView
+from core.views import UploadFileView, RetrieveDeleteItem
 from core.models import Protein
 
 from . import views
@@ -24,5 +24,6 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.home),
-    path('upload/', UploadFileView.as_view(), name='upload-file')
+    path('upload/', UploadFileView.as_view(), name='upload-file'),
+    path('list/', RetrieveDeleteItem.as_view(), name='list')
 ]

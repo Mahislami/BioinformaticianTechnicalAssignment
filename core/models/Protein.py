@@ -8,7 +8,7 @@ class Protein(models.Model):
     Description = models.TextField()
     ZeroHrProteinAbundance = models.TextField()
     HalfHrProteinAbundance = models.TextField()
-    OneHrProteinAbundance = models.TextField()
+    OneHrProteinAbundance = models.BigIntegerField()
     TwoHrProteinAbundance = models.TextField()
     ThreeHrProteinAbundance = models.TextField()
     FourHrProteinAbundance = models.TextField()
