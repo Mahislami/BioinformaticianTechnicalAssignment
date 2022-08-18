@@ -11,5 +11,5 @@ python manage.py migrate core
 
 
 
-docker build --tag mysql_container .
+docker build --tag mysql_db .
 docker build --tag bio-ta .   
