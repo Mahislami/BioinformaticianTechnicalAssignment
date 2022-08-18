@@ -56,14 +56,39 @@ class TU(generics.ListAPIView):
 
     def get_queryset(self):
 
-        timePoint = int(self.request.query_params.get('timePoint'))
-        abundanceThreshold = int(self.request.query_params.get('thresh'))
+        timePoint = float(self.request.query_params.get('timePoint'))
+        abundanceThreshold = float(self.request.query_params.get('thresh'))
 
-        if timePoint == 1:
+        if timePoint == 0:
+            self.queryset = Protein.objects.filter(ZeroHrProteinAbundance__gte=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 0.5:
+            self.queryset = Protein.objects.filter(HalfHrProteinAbundance__gte=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 1:
             self.queryset = Protein.objects.filter(OneHrProteinAbundance__gte=abundanceThreshold)
             return (self.queryset)
         elif timePoint == 2:
             self.queryset = Protein.objects.filter(TwoHrProteinAbundance__gte=abundanceThreshold)
             return (self.queryset)
-
-        #return JsonResponse(request.query_params.get('thresh'))
+        elif timePoint == 3:
+            self.queryset = Protein.objects.filter(ThreeHrProteinAbundance__gte=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 4:
+            self.queryset = Protein.objects.filter(FourHrProteinAbundance__gte=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 5:
+            self.queryset = Protein.objects.filter(FiveHrProteinAbundance=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 6:
+            self.queryset = Protein.objects.filter(SixHrProteinAbundance=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 9:
+            self.queryset = Protein.objects.filter(NineHrProteinAbundance=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 12:
+            self.queryset = Protein.objects.filter(TwelveHrProteinAbundance=abundanceThreshold)
+            return (self.queryset)
+        elif timePoint == 24:
+            self.queryset = Protein.objects.filter(TwentyFourHrProteinAbundance=abundanceThreshold)
+            return (self.queryset)

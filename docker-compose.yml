@@ -8,20 +8,23 @@ services:
       - 8000:8000
     image: bio-ta
     container_name: django_container
-    command: python manage.py runserver 0.0.0.0:8000 
     depends_on:
       - db
+    command: ["./wait-for-it.sh", "db:3306", "--", "python", "manage.py", "runserver", "0.0.0.0:8000"]
     restart: on-failure:15
   db:
-    image: mysql:latest
+    container_name: "mysql_container"
+    image: mysql_db
     restart: always
     environment:
       MYSQL_DATABASE: 'django-app-db'
       MYSQL_ROOT_PASSWORD: '12345'
     volumes:
-      - ./data/mysql/dbb:/var/lib/mysql
+      - mysqlvol:/var/lib/mysql
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+volumes:
+    mysqlvol: null

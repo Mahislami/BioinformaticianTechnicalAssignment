@@ -1,0 +1,4 @@
+FROM mysql:latest
+ENV MYSQL_DATABASE: 'django-app-db'
+ENV MYSQL_ROOT_PASSWORD: '12345'
+EXPOSE 3306
