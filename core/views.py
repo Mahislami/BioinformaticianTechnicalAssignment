@@ -7,7 +7,7 @@ from rest_framework import generics
 import io, csv, pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from core.models.serializers import FileUploadSerializer, ProteinSerializer
+from core.models.serializers import FileUploadSerializer, ProteinSerializer, ProteinInfoSerializer, ProteinTimePointSerializer
 from rest_framework.response import Response
 
 def home(request):
@@ -49,10 +49,9 @@ class UploadFileView(generics.CreateAPIView):
         return JsonResponse({'status':'success', 'code':'200'})
 
 
-class TU(generics.ListAPIView):
+class ProteinAbbsorbanceTimePointFilter(generics.ListAPIView):
 
     serializer_class = ProteinSerializer
-    #queryset = Protein.objects.all()
 
     def get_queryset(self):
 
@@ -92,3 +91,23 @@ class TU(generics.ListAPIView):
         elif timePoint == 24:
             self.queryset = Protein.objects.filter(TwentyFourHrProteinAbundance=abundanceThreshold)
             return (self.queryset)
+
+class ProteinInfo(generics.ListAPIView):
+    
+    serializer_class = ProteinInfoSerializer
+
+    def get_queryset(self):
+        
+        proteinID = int(self.request.query_params.get('proteinID'))
+        self.queryset = Protein.objects.filter(ProteinID=proteinID)
+        return self.queryset
+    
+class ProteinTimePointAbsorbance(generics.ListAPIView):
+    
+    serializer_class = ProteinTimePointSerializer
+
+    def get_queryset(self):
+        
+        proteinID = int(self.request.query_params.get('proteinID'))
+        self.queryset = Protein.objects.filter(ProteinID=proteinID)
+        return self.queryset
