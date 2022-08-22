@@ -16,7 +16,7 @@ Including another URLconf
 from turtle import home
 from django.contrib import admin
 from django.urls import path
-from core.views import ProteinAbbsorbanceTimePointFilter, UploadFileView, ProteinInfo, ProteinTimePointAbsorbance
+from core.views import ProteinAbbsorbanceTimePointThresholdFilter, UploadFileView, ProteinInfo, ProteinTimePointAbsorbance, ProteinAbbsorbanceTimePointFilter, ProteinWithSpecificProcessFunciton
 from core.models import Protein
 
 from . import views
@@ -25,7 +25,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', views.home),
     path('upload/', UploadFileView.as_view(), name='upload-file'),
-    path('list/', ProteinAbbsorbanceTimePointFilter.as_view(), name='list'),
+    path('list/', ProteinAbbsorbanceTimePointThresholdFilter.as_view(), name='list'),
     path('info/', ProteinInfo.as_view(), name='info'),
-    path('time-point/', ProteinTimePointAbsorbance.as_view(), name='time-point')
+    path('time-point/', ProteinTimePointAbsorbance.as_view(), name='time-point'),
+    path('single-field-time-point/', ProteinAbbsorbanceTimePointFilter.as_view(), name='single-field-time-point'),
+    path('process/', ProteinWithSpecificProcessFunciton.as_view(), name='process')
 ]

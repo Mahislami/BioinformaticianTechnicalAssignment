@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "core",
     "templates",
     "rest_framework",
-    "django_filters"
+    "django_filters",
 ]
 
 MIDDLEWARE = [

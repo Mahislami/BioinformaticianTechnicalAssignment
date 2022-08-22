@@ -17,14 +17,24 @@ class ProteinSerializer(serializers.ModelSerializer):
                   'CellularProcesses','ProteinFunctions','ReactomePathways'
                 )
 
-class ProteinInfoSerializer(ProteinSerializer):
+class ProteinInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Protein
         fields = ('ProteinID','Accessoin','AverageMass', 
                   'Description', 'CellularProcesses','ProteinFunctions','ReactomePathways'
                 )
 
-class ProteinTimePointSerializer(ProteinSerializer):
+class ProteinTimePointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Protein
+        fields = ('ProteinID','ZeroHrProteinAbundance','HalfHrProteinAbundance',
+                  'OneHrProteinAbundance','TwoHrProteinAbundance','ThreeHrProteinAbundance',
+                  'FourHrProteinAbundance','FiveHrProteinAbundance','SixHrProteinAbundance',
+                  'NineHrProteinAbundance','TwelveHrProteinAbundance','TwentyFourHrProteinAbundance'
+                )
+
+class ProteinSingleTimePointSerizlizer(serializers.ModelSerializer):
+
     class Meta:
         model = Protein
         fields = ('ProteinID','ZeroHrProteinAbundance','HalfHrProteinAbundance',
