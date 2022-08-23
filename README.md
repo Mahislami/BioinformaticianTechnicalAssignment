@@ -44,5 +44,9 @@ Then follow the instructions to set the credentials.
 
 ## Populating Data
 
-To populate data, you can either use the ``` diff populateData() in orange ``` function function provided in the Notebook.ipynb 
+To populate data, you can either use the
+``` python
+ populateData()
+ ```
+ function function provided in the Notebook.ipynb 
 
