@@ -40,6 +40,8 @@ There are two ways to populate data into the database:
 ##### 1) Using Notebook
 Use the function provided in the Notebook.ipynb by running the cell in which the ```populateData()``` is called the csv file will be populated in the mysql db.
 
+![](uploadFile.png)
+
 ##### 1) Using Admin Profile
 To use the django admin protal, you first need to create an admin user. To do so, make sure you have the application running (see [link](#1-Running-The-Application-Locally)). Then open a new terminal and eun the command below:
 ```
@@ -58,4 +60,9 @@ To run the testscases, run the command below:
 ```
 docker exec -it django_container python manage.py test
 ```
+
+
+
+
+
 
