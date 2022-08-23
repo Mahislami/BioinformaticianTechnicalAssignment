@@ -5,7 +5,7 @@
 Change the directory to DB-Docker:
 
 ```
-cd SQL-Docker
+cd DB-Docker
 ```
 
 ّIn this folder, you will find a Dockerfile used for creating the mysql image. execute the file by running the command below and wait until the build is complete:
