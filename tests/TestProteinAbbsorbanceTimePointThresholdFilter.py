@@ -1,16 +1,13 @@
+from django.test import TestCase
 from core.models.Protein import Protein
 from rest_framework.test import APIRequestFactory
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_200_OK)
-from unittest.mock import patch
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 from core.views import ProteinAbbsorbanceTimePointThresholdFilter
 
 class TestProteinAbbsorbanceTimePointThresholdFilter(TestCase):
 
+    # Sample valid and invalid requests body    
     requestProperBodyLowThresh = {'timePoint': 12, 'thresh':2631899999}
     requestProperBodyHighThresh = {'timePoint': 12, 'thresh':2631900001}
     requestMissingThresholdBody = {'timePoint': 12}
@@ -18,6 +15,7 @@ class TestProteinAbbsorbanceTimePointThresholdFilter(TestCase):
     requestMissingTimepointBody = {'thresh':1000000}
     requestMissingFieldsBody = {}
     
+    # Creating dummy record in test db
     def setUp(self):
         Protein.objects.create(
                     ProteinID = 26,
@@ -40,6 +38,7 @@ class TestProteinAbbsorbanceTimePointThresholdFilter(TestCase):
                       ReactomePathways = 'Platelet degranulation'
                     )
 
+    # Test Cases
     def testRequestProperBodyLowThresh(self):
         factory = APIRequestFactory()
         request = factory.get('/list/', self.requestProperBodyLowThresh)

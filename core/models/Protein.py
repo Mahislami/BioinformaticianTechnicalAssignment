@@ -1,5 +1,9 @@
 from django.db import models
 
+'''
+The Protein ORM model based on the given schema
+Note: The abundance values are stored in BigIntegerField.
+'''
 class Protein(models.Model):
 
     ProteinID = models.IntegerField(unique=True, null=False)

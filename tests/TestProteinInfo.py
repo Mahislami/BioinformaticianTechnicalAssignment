@@ -1,21 +1,19 @@
+from django.test import TestCase
 from core.models.Protein import Protein
 from rest_framework.test import APIRequestFactory
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_200_OK)
-from unittest.mock import patch
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 from core.views import ProteinInfo
 
 
 class TestProteinInfo(TestCase):
-
+    
+    # Sample valid and invalid requests body
     requestProperBody = {'proteinID': 26}
     requestNonExistingProtein = {'proteinID':27}
     requestMissingFieldBody = {}
     
+    # Creating dummy record in test db
     def setUp(self):
         Protein.objects.create(
                     ProteinID = 26,
@@ -38,6 +36,7 @@ class TestProteinInfo(TestCase):
                       ReactomePathways = 'Platelet degranulation'
                     )
 
+    # Test Cases
     def testRequestProperBody(self):
         factory = APIRequestFactory()
         request = factory.get('/info/', self.requestProperBody)

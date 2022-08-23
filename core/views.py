@@ -1,31 +1,28 @@
-from http.client import BAD_REQUEST, HTTPResponse
-import json
-from pickle import TRUE
-from re import T
-from telnetlib import STATUS
+
+import pandas as pd
 from django.http import JsonResponse
-from django.shortcuts import render
-from core.models.Protein import Protein
+from django.db import IntegrityError
 from rest_framework import generics
 from rest_framework.views import APIView
-import io, csv, pandas as pd
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from core.models.serializers import FileUploadSerializer, ProteinSerializer, ProteinInfoSerializer, ProteinTimePointSerializer, ProteinSingleTimePointSerizlizer
-from rest_framework.response import Response
-from django.core import serializers
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_201_CREATED,
-    HTTP_200_OK)
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
+from core.models.Protein import Protein
+from core.models.serializers import FileUploadSerializer, ProteinSerializer, \
+                                    ProteinInfoSerializer, ProteinTimePointSerializer
 
-def home(request):
-    return
 
+# A Calss-based view for uploading the csv file
 class UploadFileView(generics.CreateAPIView):
     
     serializer_class = FileUploadSerializer
     
+    '''
+    Description: Takes the file from the POST request, create Protein instances and fill the objects with data.
+
+    Input: Post Requets with file field
+
+    Output: Json object including a message and the status code
+    '''
+
     def create(self, request, *args, **kwargs):
         try:
             proteins = []
@@ -56,21 +53,36 @@ class UploadFileView(generics.CreateAPIView):
                 proteins.append(protein)
 
             Protein.objects.bulk_create(proteins)
-            return JsonResponse({'status':'success', 'code':'200'})
+            return JsonResponse({'body':'success'},status=HTTP_200_OK)
 
         except AttributeError:
-            return JsonResponse({'status':'Bad Request', 'code':'400'})
-    
+            return JsonResponse({'body':'Bad Request'}, status=HTTP_400_BAD_REQUEST)
 
+        except IntegrityError:
+            return JsonResponse({'body':'Data ALready Exists'}, status=HTTP_400_BAD_REQUEST)
+
+# A Calss-based view for applying threshold filters on the proteins
 class ProteinAbbsorbanceTimePointThresholdFilter(APIView):
 
     ALLOWED_TIME_POINTS = [0, 0.5, 1, 2, 3, 4, 5, 6, 9, 12, 24]
 
+    '''
+    Description: Takes a time point and a threshold from the GET request, return Protein whose abundance is 
+    above the threshold in the time point .
+
+    Input: GET Requets with time point and threshold as prameters
+
+    Output: Json object including a message and the status code
+    '''
+
     def get(self, request):
         try:
+
+            # Parse the GET request
             timePoint = request.query_params.get('timePoint')
             abundanceThreshold = request.query_params.get('thresh')
 
+            # Validations
             if not timePoint or not abundanceThreshold:
                 return JsonResponse({'body':'timePoint or abundanceThreshold not specified'},status=HTTP_400_BAD_REQUEST)
 
@@ -80,6 +92,7 @@ class ProteinAbbsorbanceTimePointThresholdFilter(APIView):
             timePoint = float(timePoint)
             abundanceThreshold = float(abundanceThreshold)
 
+            # Switchcase based on timePoint to find those above thershold in the relevant column and making query
             if timePoint == 0:
                 queryset = Protein.objects.filter(ZeroHrProteinAbundance__gte=abundanceThreshold)
             elif timePoint == 0.5:
@@ -108,28 +121,40 @@ class ProteinAbbsorbanceTimePointThresholdFilter(APIView):
 
             serializer = ProteinSerializer(queryset, many=True)
             return JsonResponse({'body':serializer.data}, status=HTTP_200_OK)
-            
-
+        
         except AttributeError:
             return JsonResponse({'status':'Bad Request', 'code':HTTP_400_BAD_REQUEST})
 
 
+# A Calss-based view for retrieving single abundance values 
 class ProteinAbbsorbanceTimePointFilter(generics.ListAPIView):
 
         ALLOWED_TIME_POINTS = [0, 0.5, 1, 2, 3, 4, 5, 6, 9, 12, 24]
         
+        '''
+        Description: Takes a time point and a proteinID from the GET request, return the abundance of the protein for the given time point
+
+        Input: GET Requets with time point and proteinID as prameters
+
+        Output: Json object including a message and the status code
+        '''
+
         def list(self, request, *args, **kwargs):
 
             try:
+
+                # Parse the GET request
                 proteinID = request.query_params.get('proteinID')
                 timePoint = request.query_params.get('timePoint')
 
+                # Validations
                 if not proteinID or not timePoint:
                     return JsonResponse({'body':'proteinID or timePoint not specified'},status=HTTP_400_BAD_REQUEST)
                 
                 if float(timePoint) not in self.ALLOWED_TIME_POINTS:
                     return JsonResponse({'body':'Time point not defined'},status=HTTP_400_BAD_REQUEST)
 
+                # Switchcase based on given time point and making the query    
                 if float(timePoint) == 0:
                     queryset = Protein.objects.filter(ProteinID=proteinID).values('ProteinID','ZeroHrProteinAbundance').first()
                 elif float(timePoint) == 0.5:
@@ -162,58 +187,114 @@ class ProteinAbbsorbanceTimePointFilter(generics.ListAPIView):
                 return JsonResponse({'body':'Bad Request'},status=HTTP_400_BAD_REQUEST)
 
 
+# A Calss-based view for retrieving a protein's info without the numeric values
 class ProteinInfo(APIView):
+
+    '''
+    Description: Takes a proteinID from the GET request, return its information excluding the numeric values
+
+    Input: GET Requets with proteinID as prameters
+
+    Output: Json object including a message and the status code
+    '''
     
     def get(self, request):
 
         try:
+
+            # Parse the GET request
             proteinID = (request.query_params.get('proteinID'))
+
+            # Validations
             if proteinID == None:
                 return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
+            
+            # Making the query    
             queryset = Protein.objects.filter(ProteinID=int(proteinID))
             if not queryset:
                 return JsonResponse({'body':'Protein ID does not exist'}, status=HTTP_400_BAD_REQUEST)
+            
+            # Serializing the Protein Object 
             serializer = ProteinInfoSerializer(queryset[0])
             return JsonResponse({'body':serializer.data}, status=HTTP_200_OK)
+        
         except ValueError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
+
         except AttributeError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
 
 
+# A Calss-based view for retrieving a protein's info only the numeric values
 class ProteinTimePointAbsorbance(APIView):
     
+    '''
+    Description: Takes a proteinID from the GET request, return only the numeric values of the timepoints
+
+    Input: GET Requets with proteinID as prameters
+
+    Output: Json object including a message and the status code
+    '''
+
     def get(self, request):
         
         try:
+            
+            # Parse the GET request
             proteinID = (request.query_params.get('proteinID'))
+
+            # Validations
             if not proteinID:
                 return JsonResponse({'body':'proteinID not specified'}, status=HTTP_400_BAD_REQUEST)
+
+            # Making the query    
             queryset = Protein.objects.filter(ProteinID=proteinID)
             if not queryset:
                  return JsonResponse({'body':'Protein not found'}, status=HTTP_400_BAD_REQUEST)
+
+            # Serializing the Protein Object        
             serializer = ProteinTimePointSerializer(queryset[0])
             return JsonResponse({'body':serializer.data}, status=HTTP_200_OK)
+
         except ValueError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
+
         except AttributeError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
 
 
+# A Calss-based view for retrieving a proteins which contain a specific cellular process
 class ProteinWithSpecificProcessFunciton(APIView):
+
+    '''
+    Description: Takes a cellular processe from the GET request, return only proteins which contain this process.
+
+    Input: GET Requets with process as prameter
+
+    Output: Json object including a message and the status code
+    '''
     
     def get(self, request):
         try:
+           # Parse the GET request
             process = (request.query_params.get('process'))
+
+            # Validations
             if not process:
                 return JsonResponse({'body':'process not specified'},status=HTTP_400_BAD_REQUEST)
+            
+            # Making the query    
             queryset = Protein.objects.filter(CellularProcesses__icontains=process)
             if not queryset:
                 return JsonResponse({'body':'No item found'}, status=HTTP_400_BAD_REQUEST)
+
+            # Serializing the Protein Object            
             serializer = ProteinInfoSerializer(queryset, many=True)
             return JsonResponse({'body':serializer.data}, status=HTTP_200_OK)
+        
         except ValueError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
+
         except AttributeError:
             return JsonResponse({'status':'Bad Request'},status=HTTP_400_BAD_REQUEST)
         

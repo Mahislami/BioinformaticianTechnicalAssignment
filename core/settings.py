@@ -13,20 +13,21 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 from os import environ
-from dotenv import load_dotenv
+import environ
 
 
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-9rhw-vohgo++)j+$3z%p8iinsg!1w61l+f6f#h0f-!p@o$zd--"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,21 +83,14 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-#DATABASES = {
-#    "default": {
-#        "ENGINE": "django.db.backends.sqlite3",
-#        "NAME": BASE_DIR / "db.sqlite3",
-#    }
-#}
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "django-app-db",
-        "USER": "root",
-        "PASSWORD" : "12345",
-        "HOST" : 'db',
-        "PORT" : "3306"
+        "NAME": env("NAME"),
+        "USER": env("USER"),
+        "PASSWORD" : env("PASSWORD"),
+        "HOST" : env("HOST"),
+        "PORT" : env("PORT")
     }
 }
 # Password validation

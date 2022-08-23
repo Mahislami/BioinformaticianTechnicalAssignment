@@ -13,21 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from turtle import home
+
 from django.contrib import admin
 from django.urls import path
-from core.views import ProteinAbbsorbanceTimePointThresholdFilter, UploadFileView, ProteinInfo, ProteinTimePointAbsorbance, ProteinAbbsorbanceTimePointFilter, ProteinWithSpecificProcessFunciton
-from core.models import Protein
+from core.views import  ProteinAbbsorbanceTimePointThresholdFilter, UploadFileView, \
+                        ProteinInfo, ProteinTimePointAbsorbance, ProteinAbbsorbanceTimePointFilter, \
+                        ProteinWithSpecificProcessFunciton
+
 
 from . import views
 
 urlpatterns = [
+
+    # Url for admin page
     path("admin/", admin.site.urls),
-    path('', views.home),
+    # Url for uploading the csv file
     path('upload/', UploadFileView.as_view(), name='upload-file'),
+    # Url for retrieving proteins above threshold
     path('list/', ProteinAbbsorbanceTimePointThresholdFilter.as_view(), name='list'),
+    # Url for getting protein information
     path('info/', ProteinInfo.as_view(), name='info'),
+    # Url for getting protein numeric information
     path('time-point/', ProteinTimePointAbsorbance.as_view(), name='time-point'),
+    # Url for getting single abundance 
     path('single-field-time-point/', ProteinAbbsorbanceTimePointFilter.as_view(), name='single-field-time-point'),
+    # Url for getting Protein with specific process 
     path('process/', ProteinWithSpecificProcessFunciton.as_view(), name='process')
 ]

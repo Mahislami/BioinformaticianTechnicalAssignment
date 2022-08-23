@@ -1,22 +1,20 @@
+from django.test import TestCase
 from core.models.Protein import Protein
 from rest_framework.test import APIRequestFactory
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_200_OK)
-from unittest.mock import patch
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 
 from core.views import ProteinAbbsorbanceTimePointFilter
 
 class TestProteinAbbsorbanceTimePointFilter(TestCase):
 
+    # Sample valid and invalid requests body    
     requestProperBody = {'proteinID': 26, 'timePoint':12}
     requestInvaildTimePointBody = {'timePoint': 12, 'timePoint':8}
     requestMissingProteinIDBody = {'timePoint': 12}
     requestMissingTimepointBody = {'proteinID':26}
     requestMissingFieldsBody = {}
     
+    # Creating dummy record in test db
     def setUp(self):
         Protein.objects.create(
                     ProteinID = 26,
@@ -38,7 +36,7 @@ class TestProteinAbbsorbanceTimePointFilter(TestCase):
                       ProteinFunctions = 'actin filament binding',
                       ReactomePathways = 'Platelet degranulation'
                     )
-
+    # Test Cases
     def testRequestProperBody(self):
         factory = APIRequestFactory()
         request = factory.get('/single-field-time-point/', self.requestProperBody)

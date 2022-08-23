@@ -47,8 +47,8 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_DATABASE: 'django-app-db'
-      MYSQL_ROOT_PASSWORD: '12345'
+      MYSQL_DATABASE: ${NAME}#'django-app-db'
+      MYSQL_ROOT_PASSWORD: ${PASSWORD} 12345
     volumes:
       - ./data/mysql/dbb:/var/lib/mysql
   adminer:

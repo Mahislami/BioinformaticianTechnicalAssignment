@@ -7,3 +7,4 @@ djangorestframework==3.13.1
 pandas==1.4.3
 django-filter
 python-dotenv
+django-environ

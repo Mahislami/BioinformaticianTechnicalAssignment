@@ -1,20 +1,19 @@
+from django.test import TestCase
 from core.models.Protein import Protein
 from rest_framework.test import APIRequestFactory
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_200_OK)
-from unittest.mock import patch
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
+
 
 from core.views import ProteinWithSpecificProcessFunciton
 
 class TestProteinWithSpecificProcessFunciton(TestCase):
 
+    # Sample valid and invalid requests body
     requestProperBody = {'process': 'cell adhesion'}
     requestInvaildProcessBody = {'process': 'cell adhesion 2'}
     requestMissingFieldsBody = {}
     
+    # Creating dummy record in test db
     def setUp(self):
         Protein.objects.create(
                     ProteinID = 26,
@@ -37,19 +36,20 @@ class TestProteinWithSpecificProcessFunciton(TestCase):
                       ReactomePathways = 'Platelet degranulation'
                     )
 
+    # Test Cases
     def testRequestProperBody(self):
         factory = APIRequestFactory()
         request = factory.get('/process/', self.requestProperBody)
         response = ProteinWithSpecificProcessFunciton.as_view()(request)
         self.assertEqual(response.status_code, HTTP_200_OK)
 
-    def testRequestInvaildProcessBody(self):
+    def testRequestInvaildProcess(self):
         factory = APIRequestFactory()
         request = factory.get('/process/', self.requestInvaildProcessBody)
         response = ProteinWithSpecificProcessFunciton.as_view()(request)
         self.assertEqual(response.status_code, HTTP_400_BAD_REQUEST)
 
-    def testRequestMissingProteinIDBody(self):
+    def testRequestMissingProteinID(self):
         factory = APIRequestFactory()
         request = factory.get('/process/', self.requestMissingFieldsBody)
         response = ProteinWithSpecificProcessFunciton.as_view()(request)
