@@ -16,6 +16,9 @@ docker build --tag mysql_db .
 
 Then move back to the main directory and run the command below to execute the Dockerfile which is used to build the application image:
 ```
+cd ..
+```
+```
 docker build --tag bio-ta .
 ```
 
