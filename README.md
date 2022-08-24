@@ -51,7 +51,7 @@ Then follow the instruction to set the credentials. Next, go to the address belo
 ```sh
 127.0.0.1:8000/admin
 ```
-A ```Upload a csv file``` link has been added to the Django admin portal through which you can choose and upload a .csv file to populate the data. 
+Click on the Protein under core section. A ```Upload a csv file``` link has been added to the Django admin portal through which you can choose and upload a .csv file to populate the data. 
 
 ![](adminPortal.png)
 
